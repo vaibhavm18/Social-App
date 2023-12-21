@@ -1,10 +1,15 @@
 build:
-	@go build -o bin/go-blind
+	@go build -o bin/main cmd/api/main.go
 
 run: build
-	@./bin/go-blind
+	@./bin/main
 
 test:
 	@go test -v ./..
+
+watch:
+		@air
+		@echo "Watching...";
+
 
 

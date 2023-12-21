@@ -8,8 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/vaibhavm18/go-blind/common"
-	"github.com/vaibhavm18/go-blind/router"
+	"github.com/vaibhavm18/go-blind/internal/config"
+	"github.com/vaibhavm18/go-blind/internal/router"
 )
 
 func main() {
@@ -23,18 +23,20 @@ func main() {
 
 func run() error {
 	// Load Env
-	err := common.LoadEnv()
+	err := config.LoadEnv()
 
 	if err != nil {
 		return err
 	}
 
 	// Connect DB
-	err = common.InitDB()
+	err = config.InitDB()
 
 	if err != nil {
 		return err
 	}
+
+	defer config.CloseDB()
 
 	app := fiber.New()
 

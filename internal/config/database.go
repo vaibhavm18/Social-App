@@ -1,4 +1,4 @@
-package common
+package config
 
 import (
 	"context"
@@ -16,7 +16,7 @@ func GetDBCollection(col string) *mongo.Collection {
 }
 
 func InitDB() error {
-	uri := os.Getenv("MONGO_URL")
+	uri := os.Getenv("MONGODB_URL")
 
 	if uri == "" {
 		return errors.New("You must set your 'MONGO_URL' env variable.")
