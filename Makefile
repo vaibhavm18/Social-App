@@ -12,4 +12,6 @@ watch:
 		@echo "Watching...";
 
 
+dev:
+	cd client && pnpm dev
 

@@ -3,7 +3,7 @@ package router
 import "github.com/gofiber/fiber/v2"
 
 func AddHomeGroup(app *fiber.App) {
-	homeGroup := app.Group("/")
+	homeGroup := app.Group("/api/v1")
 	homeGroup.Get("/health", checkHealth)
 }
 
