@@ -3,6 +3,7 @@ package config
 import (
 	"context"
 	"errors"
+	"fmt"
 	"os"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -21,6 +22,7 @@ func InitDB() error {
 	if uri == "" {
 		return errors.New("You must set your 'MONGO_URL' env variable.")
 	}
+	fmt.Println(uri)
 
 	client, err := mongo.Connect(context.Background(), options.Client().ApplyURI(uri))
 

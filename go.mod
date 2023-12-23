@@ -8,6 +8,8 @@ require (
 	go.mongodb.org/mongo-driver v1.13.1
 )
 
+require github.com/faceair/jio v1.0.1 // indirect
+
 require (
 	github.com/andybalholm/brotli v1.0.5 // indirect
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible // direct

@@ -10,20 +10,30 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/vaibhavm18/go-blind/internal/config"
 	"github.com/vaibhavm18/go-blind/internal/router"
+	"github.com/vaibhavm18/go-blind/internal/util"
 )
 
 func main() {
 	fmt.Println("hello god!")
+
 	err := run()
 
 	if err != nil {
 		panic(err)
 	}
+
 }
 
 func run() error {
 	// Load Env
 	err := config.LoadEnv()
+
+	if err != nil {
+		return err
+	}
+
+	// To test JWT generating
+	_, err = util.GenerateJwt("", "")
 
 	if err != nil {
 		return err
@@ -44,7 +54,9 @@ func run() error {
 	app.Use(cors.New())
 	app.Use(recover.New())
 
+	// routes
 	router.AddHomeGroup(app)
+	router.AddAuthGroup(app)
 
 	var port string
 	if port = os.Getenv("PORT"); port == "" {
