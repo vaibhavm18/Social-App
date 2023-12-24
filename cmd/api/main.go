@@ -10,7 +10,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/vaibhavm18/go-blind/internal/config"
 	"github.com/vaibhavm18/go-blind/internal/router"
-	"github.com/vaibhavm18/go-blind/internal/util"
 )
 
 func main() {
@@ -27,13 +26,6 @@ func main() {
 func run() error {
 	// Load Env
 	err := config.LoadEnv()
-
-	if err != nil {
-		return err
-	}
-
-	// To test JWT generating
-	_, err = util.GenerateJwt("", "")
 
 	if err != nil {
 		return err

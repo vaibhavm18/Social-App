@@ -9,7 +9,6 @@ import (
 	"github.com/vaibhavm18/go-blind/internal/config"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	"go.mongodb.org/mongo-driver/mongo"
 	"golang.org/x/crypto/bcrypt"
 )
 
@@ -20,30 +19,55 @@ type User struct {
 	Password string             `json:"password" bson:"password"`
 }
 
-func CreateUser(user User) (*mongo.InsertOneResult, error) {
-	_, err := structToByte[User](user)
+func userExists(email, username string) bool {
+	filter := bson.M{"$or": []bson.M{
+		{"email": email},
+		{"username": username},
+	}}
+
+	collection := config.GetDBCollection("Users")
+
+	count, err := collection.CountDocuments(context.Background(), filter)
 
 	if err != nil {
-		return nil, err
+		return false
+	}
+
+	return count > 0
+}
+
+func CreateUser(user User) (User, error) {
+	_, err := validateSignUp(user)
+	if err != nil {
+		return User{}, err
+	}
+
+	collection := config.GetDBCollection("Users")
+
+	exist := userExists(user.Email, user.Username)
+
+	if exist {
+		return User{}, errors.New("User already exist. Please login")
 	}
 
 	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
 
 	if err != nil {
-		return nil, err
+		return User{}, err
 	}
 
 	user.Password = string(hash)
 
-	collection := config.GetDBCollection("Users")
 	res, err := collection.InsertOne(context.TODO(), user)
 
 	if err != nil {
-		return nil, err
+		return User{}, err
 	}
 
 	user.Password = ""
-	return res, nil
+	user.Id = res.InsertedID.(primitive.ObjectID)
+
+	return user, nil
 }
 
 func GetUserByUsername(input User) (User, error) {
@@ -72,6 +96,15 @@ func GetUserByUsername(input User) (User, error) {
 	return newUser, nil
 }
 
+func GetUserById(username string) (User, error) {
+	var newUser User
+	collection := config.GetDBCollection("Users")
+
+	err := collection.FindOne(context.TODO(), bson.M{"username": username}).Decode(&newUser)
+
+	return newUser, err
+}
+
 func validateSignUp(user User) (User, error) {
 	data, err := structToByte[User](user)
 
@@ -80,9 +113,9 @@ func validateSignUp(user User) (User, error) {
 	}
 
 	_, err = jio.ValidateJSON(&data, jio.Object().Keys(jio.K{
-		"username": jio.String().Min(3).Max(10).Required(),
-		"password": jio.String().Min(6).Required(),
-		"email":    jio.String().Regex(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`).Required(),
+		"username": jio.String().Required().Min(3).Max(10),
+		"password": jio.String().Required().Min(6).Required(),
+		"email":    jio.String().Required().Regex(`^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$`),
 	}))
 
 	if err != nil {
@@ -103,6 +136,7 @@ func validatLogin(user User) (User, error) {
 		"username": jio.String().Min(3).Max(10).Required(),
 		"password": jio.String().Min(6).Required(),
 	}))
+
 	return user, err
 }
 
