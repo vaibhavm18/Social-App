@@ -1,7 +1,8 @@
-package auth
+package router
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"github.com/vaibhavm18/go-blind/internal/model"
 	"github.com/vaibhavm18/go-blind/internal/util"
 )
 
@@ -18,7 +19,7 @@ func checkHealth(c *fiber.Ctx) error {
 }
 
 func login(c *fiber.Ctx) error {
-	var newUser User
+	var newUser model.User
 
 	if err := c.BodyParser(&newUser); err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -26,7 +27,7 @@ func login(c *fiber.Ctx) error {
 		})
 	}
 
-	res, err := GetUserByUsername(newUser)
+	res, err := model.GetUserByUsername(newUser)
 
 	if err != nil {
 		return c.Status(403).JSON(fiber.Map{
@@ -59,7 +60,7 @@ func login(c *fiber.Ctx) error {
 }
 
 func signup(c *fiber.Ctx) error {
-	var newUser User
+	var newUser model.User
 
 	if err := c.BodyParser(&newUser); err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -67,7 +68,7 @@ func signup(c *fiber.Ctx) error {
 		})
 	}
 
-	res, err := CreateUser(newUser)
+	res, err := model.CreateUser(newUser)
 
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -117,7 +118,7 @@ func authenticate(c *fiber.Ctx) error {
 		})
 	}
 
-	res, err := GetUserById(username)
+	res, err := model.GetUserById(username)
 
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{

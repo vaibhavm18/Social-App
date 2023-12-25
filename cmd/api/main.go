@@ -8,9 +8,8 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
-	"github.com/vaibhavm18/go-blind/internal/auth"
 	"github.com/vaibhavm18/go-blind/internal/config"
-	"github.com/vaibhavm18/go-blind/internal/post"
+	"github.com/vaibhavm18/go-blind/internal/router"
 )
 
 func main() {
@@ -47,8 +46,8 @@ func run() error {
 	app.Use(cors.New())
 	app.Use(recover.New())
 
-	auth.AddAuthGroup(app)
-	post.AddPostGroup(app)
+	router.AddAuthGroup(app)
+	router.AddPostGroup(app)
 
 	var port string
 	if port = os.Getenv("PORT"); port == "" {

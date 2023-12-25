@@ -7,11 +7,9 @@ run: build
 test:
 	@go test -v ./..
 
-watch:
-		@air
-		@echo "Watching...";
-
-
 dev:
 	cd client && pnpm dev
 
+watch:
+	  @air
+		@echo "Watching...";
