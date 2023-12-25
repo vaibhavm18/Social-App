@@ -1,22 +1,24 @@
-package router
+package auth
 
 import (
 	"github.com/gofiber/fiber/v2"
-	"github.com/vaibhavm18/go-blind/internal/models"
 	"github.com/vaibhavm18/go-blind/internal/util"
 )
 
-var users []models.User
-
 func AddAuthGroup(app *fiber.App) {
-	authGroup := app.Group("/api/v1/auth")
-	authGroup.Get("/", authenticate)
-	authGroup.Post("/login", login)
-	authGroup.Post("/signup", signup)
+	roup := app.Group("/api/v1/auth")
+	roup.Get("/", authenticate)
+	roup.Get("/health", checkHealth)
+	roup.Post("/login", login)
+	roup.Post("/signup", signup)
+}
+
+func checkHealth(c *fiber.Ctx) error {
+	return c.Status(200).JSON(fiber.Map{"message": "Hello, World 👋!"})
 }
 
 func login(c *fiber.Ctx) error {
-	var newUser models.User
+	var newUser User
 
 	if err := c.BodyParser(&newUser); err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -24,7 +26,7 @@ func login(c *fiber.Ctx) error {
 		})
 	}
 
-	res, err := models.GetUserByUsername(newUser)
+	res, err := GetUserByUsername(newUser)
 
 	if err != nil {
 		return c.Status(403).JSON(fiber.Map{
@@ -57,7 +59,7 @@ func login(c *fiber.Ctx) error {
 }
 
 func signup(c *fiber.Ctx) error {
-	var newUser models.User
+	var newUser User
 
 	if err := c.BodyParser(&newUser); err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -65,7 +67,7 @@ func signup(c *fiber.Ctx) error {
 		})
 	}
 
-	res, err := models.CreateUser(newUser)
+	res, err := CreateUser(newUser)
 
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -115,7 +117,7 @@ func authenticate(c *fiber.Ctx) error {
 		})
 	}
 
-	res, err := models.GetUserById(username)
+	res, err := GetUserById(username)
 
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{
