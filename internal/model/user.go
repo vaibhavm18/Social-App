@@ -37,7 +37,8 @@ func userExists(email, username string) bool {
 }
 
 func CreateUser(user User) (User, error) {
-	_, err := validateSignUp(user)
+	err := validateSignUp(user)
+
 	if err != nil {
 		return User{}, err
 	}
@@ -73,7 +74,7 @@ func CreateUser(user User) (User, error) {
 func GetUserByUsername(input User) (User, error) {
 	var newUser User
 
-	_, err := validatLogin(input)
+	err := validatLogin(input)
 
 	if err != nil {
 		return User{}, err
@@ -105,11 +106,11 @@ func GetUserById(username string) (User, error) {
 	return newUser, err
 }
 
-func validateSignUp(user User) (User, error) {
+func validateSignUp(user User) error {
 	data, err := structToByte[User](user)
 
 	if err != nil {
-		return User{}, err
+		return err
 	}
 
 	_, err = jio.ValidateJSON(&data, jio.Object().Keys(jio.K{
@@ -119,17 +120,17 @@ func validateSignUp(user User) (User, error) {
 	}))
 
 	if err != nil {
-		return User{}, err
+		return err
 	}
 
-	return user, nil
+	return nil
 }
 
-func validatLogin(user User) (User, error) {
+func validatLogin(user User) error {
 	data, err := structToByte[User](user)
 
 	if err != nil {
-		return User{}, err
+		return err
 	}
 
 	_, err = jio.ValidateJSON(&data, jio.Object().Keys(jio.K{
@@ -137,7 +138,7 @@ func validatLogin(user User) (User, error) {
 		"password": jio.String().Min(6).Required(),
 	}))
 
-	return user, err
+	return err
 }
 
 func structToByte[T comparable](u T) ([]byte, error) {
