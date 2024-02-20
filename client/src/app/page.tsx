@@ -1,3 +1,5 @@
+import Preview from "@/components/Preview";
+
 export default function Home() {
   return (
     <main className="max-w-7xl mx-auto border h-screen p-4 relative">
@@ -6,18 +8,14 @@ export default function Home() {
         <div className=" overflow-auto flex-auto relative">
           <div
             className="absolute overflow-auto border border-yellow-500 w-full
-          h-full flex flex-col"
+          h-full flex flex-col gap-4 p-4"
           >
-            <div className="p-8">1</div>
-            <div className="p-8">1</div>
-            <div className="p-8">1</div>
-            <div className="p-8">1</div>
-            <div className="p-8">1</div>
-            <div className="p-8">1</div>
-            <div className="p-8">1</div>
-            <div className="p-8">1</div>
-            <div className="p-8">1</div>
-            <div className="p-8">1</div>
+            <Preview />
+            <Preview />
+            <Preview />
+            <Preview />
+            <Preview />
+            <Preview />
           </div>
         </div>
         <div className="p-5 border">Hello God!</div>
