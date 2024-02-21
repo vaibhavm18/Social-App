@@ -1,4 +1,4 @@
-import { FaThumbsDown, FaThumbsUp } from "react-icons/fa";
+import PostInteraction from "./ui/post-interaction";
 
 export default function Preview() {
   return (
@@ -17,16 +17,7 @@ export default function Preview() {
         <span className="hover:underline cursor-pointer">@vaibhav18</span>
         <span>12:20</span>
       </div>
-      <div className="flex justify-between  sm:justify-around items-center">
-        <div className="flex flex-col gap-1 items-center ">
-          <FaThumbsUp />
-          <span>20k</span>
-        </div>
-        <div className="flex flex-col gap-1 items-center ">
-          <FaThumbsDown />
-          <span>1k</span>
-        </div>
-      </div>
+      <PostInteraction dislike={100} like={10000} />
     </div>
   );
 }

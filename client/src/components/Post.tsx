@@ -1,4 +1,5 @@
-import { FaThumbsDown, FaThumbsUp } from "react-icons/fa";
+import Back from "./ui/back";
+import PostInteraction from "./ui/post-interaction";
 
 const str = `Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam vel quae
         excepturi obcaecati earum ex consectetur eum porro soluta! Doloribus
@@ -45,10 +46,11 @@ const str = `Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam vel qu
         fugiat perspiciatis dolorum natus sequi dolor. Beatae, dolorem autem
         vel, numquam non repellendus facilis, ipsam magnam repellat voluptas
         molestiae.`;
+
 export default function Post() {
   return (
-    <div className="py-10 px-2 relative flex flex-col gap-5">
-      <span className="absolute text-xl right-2 top-2">X</span>
+    <div className="px-2 lg:px-5 pt-12 pb-4 relative flex flex-col gap-5">
+      <Back />
       <h1 className="font-bold text-lg">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed iusto
         aliquid voluptatibus maiores recusandae quisquam soluta, hic sapiente
@@ -59,16 +61,7 @@ export default function Post() {
         <span>12:02</span>
       </div>
       <p>{str}</p>
-      <div className="flex justify-between  sm:justify-around items-center">
-        <div className="flex flex-col gap-1 items-center ">
-          <FaThumbsUp />
-          <span>20k</span>
-        </div>
-        <div className="flex flex-col gap-1 items-center ">
-          <FaThumbsDown />
-          <span>1k</span>
-        </div>
-      </div>
+      <PostInteraction dislike={100} like={10000} />
     </div>
   );
 }
