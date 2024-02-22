@@ -9,7 +9,7 @@ export default function Home() {
         <Header />
         <div className=" overflow-auto flex-auto relative">
           <div
-            className="absolute z-50 overflow-auto rounded-xl border-yellow-500 w-full
+            className="absolute z-50 overflow-auto rounded-xl w-full
           h-full flex flex-col gap-4 border "
           >
             {/* <Post /> */}
