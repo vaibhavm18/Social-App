@@ -35,9 +35,11 @@ export default function PostForm() {
       Description: "",
     },
   });
+
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log("Hello God!", values);
   };
+
   return (
     <Form {...form}>
       <form
