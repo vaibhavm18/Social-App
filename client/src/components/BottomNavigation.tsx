@@ -6,14 +6,17 @@ export const icons = [
   {
     name: "home",
     icon: <IoMdHome />,
+    link: "/",
   },
   {
     name: "post",
     icon: <FaPlus />,
+    link: "/post",
   },
   {
     name: "logout",
     icon: <IoLogOut />,
+    link: "/auth/login",
   },
 ];
 

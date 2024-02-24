@@ -1,8 +1,18 @@
+"use client";
+import { useRouter } from "next/navigation";
 import PostInteraction from "./ui/post-interaction";
 
-export default function Preview() {
+type Props = {
+  id: string;
+};
+export default function Preview({ id }: Props) {
+  const router = useRouter();
+  const onclick = () => {
+    router.push(`${id}`);
+  };
   return (
     <div
+      onClick={onclick}
       className="border border-gray-800 cursor-pointer hover:scale-[1.01] hover:shadow-sm 
       hover:shadow-gray-700
        mx-2 transition-all duration-300

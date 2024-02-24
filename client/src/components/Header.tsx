@@ -1,3 +1,4 @@
+import { default as Link } from "next/link";
 import { icons } from "./BottomNavigation";
 
 export default function Header() {
@@ -11,7 +12,7 @@ export default function Header() {
             className="cursor-pointer hover:bg-gray-700 p-1
           transition-all duration-200  rounded-xl sm:block hidden"
           >
-            {val.icon}
+            <Link href={val.link}>{val.icon}</Link>
           </li>
         ))}
         <li className="h-10 w-10 bg-white rounded-full cursor-pointer"></li>
