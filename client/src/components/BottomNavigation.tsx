@@ -1,6 +1,7 @@
 import { FaPlus } from "react-icons/fa";
 import { IoMdHome } from "react-icons/io";
 import { IoLogOut } from "react-icons/io5";
+import Icon from "./ui/icon";
 
 export const icons = [
   {
@@ -16,7 +17,7 @@ export const icons = [
   {
     name: "logout",
     icon: <IoLogOut />,
-    link: "/auth/login",
+    link: "/login",
   },
 ];
 
@@ -27,13 +28,9 @@ export default function BottomNavigation() {
          flex text-2xl justify-between items-center"
     >
       {icons.map((val) => (
-        <li
-          key={val.name}
-          className="cursor-pointer p-1 rounded-xl hover:bg-gray-700 text-center
-          transition-all duration-200"
-        >
+        <Icon key={val.name} link={val.link}>
           {val.icon}
-        </li>
+        </Icon>
       ))}
     </ul>
   );

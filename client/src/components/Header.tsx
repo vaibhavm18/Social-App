@@ -1,5 +1,5 @@
-import { default as Link } from "next/link";
 import { icons } from "./BottomNavigation";
+import Icon from "./ui/icon";
 
 export default function Header() {
   return (
@@ -7,13 +7,9 @@ export default function Header() {
       <span className="font-bold text-2xl md:text-3xl">Social</span>
       <ul className=" items-center text-2xl gap-12 flex">
         {icons.map((val) => (
-          <li
-            key={val.name}
-            className="cursor-pointer hover:bg-gray-700 p-1
-          transition-all duration-200  rounded-xl sm:block hidden"
-          >
-            <Link href={val.link}>{val.icon}</Link>
-          </li>
+          <Icon key={val.name} link={val.link} className="hidden sm:block">
+            {val.icon}
+          </Icon>
         ))}
         <li className="h-10 w-10 bg-white rounded-full cursor-pointer"></li>
       </ul>
