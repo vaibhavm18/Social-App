@@ -49,7 +49,7 @@ export default function Login() {
           <div className="text-center">
             <p className="text-3xl font-bold mb-2">Login</p>
             <p className="text-xl font-semibold">
-              Don't have an account ?{" "}
+              Don&apos;t have an account ?{" "}
               <Icon
                 link="/signup"
                 className="text-blue-500 cursor-pointer hover:underline transition-all"
