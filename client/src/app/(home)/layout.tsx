@@ -24,7 +24,7 @@ export default function HomeLayout({
             <div className=" overflow-auto flex-auto relative">
               <div
                 className="absolute z-50 overflow-auto rounded-xl w-full
-          h-full flex flex-col gap-4 border py-4"
+          h-full flex flex-col gap-4  py-4"
               >
                 {children}
               </div>

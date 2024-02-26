@@ -13,7 +13,7 @@ export default function Preview({ id }: Props) {
   return (
     <div
       onClick={onclick}
-      className="border border-gray-800 cursor-pointer hover:scale-[1.01] hover:shadow-sm 
+      className="  cursor-pointer hover:scale-[1.01] hover:shadow-sm 
       hover:shadow-gray-700
        mx-2 transition-all duration-300
         py-2 px-4 flex flex-col rounded-xl"

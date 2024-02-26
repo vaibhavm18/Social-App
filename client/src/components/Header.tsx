@@ -3,7 +3,7 @@ import Icon from "./ui/icon";
 
 export default function Header() {
   return (
-    <header className="px-4 border rounded-xl py-2 flex items-center justify-between ">
+    <header className="px-4  rounded-xl py-2 flex items-center justify-between border ">
       <span className="font-bold text-2xl md:text-3xl">Social</span>
       <ul className=" items-center text-2xl gap-12 flex">
         {icons.map((val) => (

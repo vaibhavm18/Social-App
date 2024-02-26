@@ -49,7 +49,7 @@ export default function Signup() {
           className="flex flex-col gap-10 items-center w-full"
         >
           <div className="text-center">
-            <p className="text-3xl font-bold mb-2">Login</p>
+            <p className="text-3xl font-bold mb-2">Signup</p>
             <p className="text-xl font-semibold">
               Already have an account ?{" "}
               <Icon
