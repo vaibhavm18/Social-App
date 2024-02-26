@@ -44,7 +44,7 @@ export default function PostForm() {
     <Form {...form}>
       <form
         onSubmit={form.handleSubmit(onSubmit)}
-        className="space-y-8 py-4 px-2 sm:px-6 flex flex-col items-stretch h-full gap-4 "
+        className="bg-[#030712] m-2 space-y-8 py-4 px-2 sm:px-6 flex flex-col items-stretch h-full gap-4 "
       >
         {fields.map((val) => (
           <FormField
