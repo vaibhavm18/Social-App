@@ -9,7 +9,6 @@ import (
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/recover"
 	"github.com/vaibhavm18/go-blind/internal/config"
-	"github.com/vaibhavm18/go-blind/internal/model"
 	"github.com/vaibhavm18/go-blind/internal/router"
 )
 
