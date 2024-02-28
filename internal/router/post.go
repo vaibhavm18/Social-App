@@ -1,27 +1,30 @@
 package router
 
 import (
-	"fmt"
 	"strconv"
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/vaibhavm18/go-blind/internal/model"
 	"github.com/vaibhavm18/go-blind/internal/util"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 )
 
 func AddPostGroup(app *fiber.App) {
 	postGroup := app.Group("/api/v1/post")
 	postGroup.Use(util.VerifyUser)
 
+	postGroup.Get("/h", postCheck)
+
 	postGroup.Get("/", getPosts)
 	postGroup.Post("/create", createPost)
 	postGroup.Put("/like", likePost)
 	postGroup.Put("/dislike", dislikePost)
-	postGroup.Delete("/removeLike", removelike)
-	postGroup.Delete("/removedislike", removedislike)
+	postGroup.Delete("/remove-like", removelike)
+	postGroup.Delete("/remove-dislike", removedislike)
 }
 
 func postCheck(c *fiber.Ctx) error {
+
 	return c.Status(200).JSON(fiber.Map{"message": "Hello, World 👋!"})
 }
 
@@ -34,11 +37,19 @@ func createPost(c *fiber.Ctx) error {
 		})
 	}
 
+	val := c.Locals("_id")
+
+	if val != nil {
+		if strVal, ok := val.(string); ok {
+			post.AuthorID, _ = primitive.ObjectIDFromHex(strVal)
+		}
+	}
+
 	res, err := model.CreatePost(post)
 
 	if err != nil {
 		return c.Status(403).JSON(fiber.Map{
-			"errorMessage": err,
+			"errorMessage": err.Error(),
 		})
 	}
 	return c.Status(200).JSON(fiber.Map{
@@ -48,11 +59,7 @@ func createPost(c *fiber.Ctx) error {
 }
 
 func getPosts(c *fiber.Ctx) error {
-	// TODO: get 10 Post at a one request using pagination
-
 	page := c.Query("page")
-
-	fmt.Println("Page", page)
 
 	pageToNum, err := strconv.Atoi(page)
 
@@ -64,7 +71,7 @@ func getPosts(c *fiber.Ctx) error {
 
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{
-			"errorMessage": err,
+			"errorMessage": err.Error(),
 		})
 	}
 
@@ -76,7 +83,6 @@ func getPosts(c *fiber.Ctx) error {
 
 func likePost(c *fiber.Ctx) error {
 
-	// TODO: Like the post
 	var input model.PostInput
 
 	if err := c.BodyParser(&input); err != nil {
@@ -85,11 +91,19 @@ func likePost(c *fiber.Ctx) error {
 		})
 	}
 
+	val := c.Locals("_id")
+
+	if val != nil {
+		if strVal, ok := val.(string); ok {
+			input.UserID, _ = primitive.ObjectIDFromHex(strVal)
+		}
+	}
+
 	err := model.LikePost(input)
 
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"errorMessage": err,
+			"errorMessage": err.Error(),
 		})
 	}
 
@@ -107,11 +121,19 @@ func dislikePost(c *fiber.Ctx) error {
 		})
 	}
 
+	val := c.Locals("_id")
+
+	if val != nil {
+		if strVal, ok := val.(string); ok {
+			input.UserID, _ = primitive.ObjectIDFromHex(strVal)
+		}
+	}
+
 	err := model.DislikePost(input)
 
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"errorMessage": err,
+			"errorMessage": err.Error(),
 		})
 	}
 
@@ -129,11 +151,19 @@ func removelike(c *fiber.Ctx) error {
 		})
 	}
 
+	val := c.Locals("_id")
+
+	if val != nil {
+		if strVal, ok := val.(string); ok {
+			input.UserID, _ = primitive.ObjectIDFromHex(strVal)
+		}
+	}
+
 	err := model.UnlikePost(input)
 
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"errorMessage": err,
+			"errorMessage": err.Error(),
 		})
 	}
 
@@ -151,11 +181,19 @@ func removedislike(c *fiber.Ctx) error {
 		})
 	}
 
+	val := c.Locals("_id")
+
+	if val != nil {
+		if strVal, ok := val.(string); ok {
+			input.UserID, _ = primitive.ObjectIDFromHex(strVal)
+		}
+	}
+
 	err := model.RemoveDislike(input)
 
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
-			"errorMessage": err,
+			"errorMessage": err.Error(),
 		})
 	}
 	return c.Status(200).JSON(fiber.Map{

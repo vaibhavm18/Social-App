@@ -3,7 +3,6 @@ package model
 import (
 	"context"
 	"errors"
-	"fmt"
 	"time"
 
 	"github.com/faceair/jio"
@@ -54,12 +53,16 @@ func CreatePost(post PostModel) (PostModel, error) {
 	res, err := col.InsertOne(ctx, post)
 
 	if err != nil {
-		fmt.Println(err)
 		return PostModel{}, err
 	}
 
-	fmt.Println("create post", res)
-	return PostModel{}, nil
+	return PostModel{
+		ID:          res.InsertedID.(primitive.ObjectID),
+		Title:       post.Title,
+		Description: post.Description,
+		CreatedAt:   post.CreatedAt,
+		AuthorID:    post.AuthorID,
+	}, nil
 
 }
 
@@ -84,7 +87,7 @@ func validatePostInput(post PostModel) error {
 
 func GetPosts(page int) ([]PostModel, error) {
 	collection := config.GetDBCollection("Posts")
-	perPage := 15
+	perPage := 3
 	skip := (page - 1) * perPage
 
 	opts := options.Find()
@@ -115,8 +118,6 @@ func GetPosts(page int) ([]PostModel, error) {
 	}
 
 	res.Close(context.Background())
-
-	fmt.Println("posts", posts)
 
 	return posts, nil
 }
@@ -175,7 +176,7 @@ func UnlikePost(input PostInput) error {
 		}
 	}
 
-	if isLiked {
+	if !isLiked {
 		return errors.New("User did not liked this post")
 	}
 
@@ -185,6 +186,8 @@ func UnlikePost(input PostInput) error {
 	if err != nil {
 		return err
 	}
+
+	_ = RemoveDislike(input)
 
 	return nil
 }
@@ -215,17 +218,12 @@ func DislikePost(input PostInput) error {
 		return err
 	}
 
-	err = UnlikePost(input)
-
-	if err != nil {
-		return err
-	}
+	_ = UnlikePost(input)
 
 	return nil
 }
 
 func RemoveDislike(input PostInput) error {
-
 	col := config.GetDBCollection("Posts")
 
 	filter := bson.M{"_id": input.PostID}
@@ -245,8 +243,8 @@ func RemoveDislike(input PostInput) error {
 		}
 	}
 
-	if isAlreadyDislike {
-		return errors.New("User already diliked the post")
+	if !isAlreadyDislike {
+		return errors.New("User already diliked the post.")
 	}
 
 	update := bson.M{"$pull": bson.M{"dislikes": input.UserID}}
@@ -256,7 +254,7 @@ func RemoveDislike(input PostInput) error {
 		return err
 	}
 
-	err = UnlikePost(input)
+	// err = UnlikePost(input)
 
 	if err != nil {
 		return err
