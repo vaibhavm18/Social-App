@@ -4,7 +4,9 @@ type Props = {
   id: string;
 };
 export default function Preview({ id }: Props) {
-  const onclick = () => {};
+  const onclick = () => {
+    console.log(id);
+  };
   return (
     <div
       onClick={onclick}

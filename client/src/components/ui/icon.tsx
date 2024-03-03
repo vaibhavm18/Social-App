@@ -6,7 +6,9 @@ type Props = {
   className?: HTMLAttributes<HTMLLIElement>["className"];
 };
 export default function Icon({ children, link, className }: Props) {
-  const onclick = () => {};
+  const onclick = () => {
+    console.log(link);
+  };
   return (
     <span
       onClick={onclick}
