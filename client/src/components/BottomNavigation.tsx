@@ -12,7 +12,7 @@ export const icons = [
   {
     name: "post",
     icon: <FaPlus />,
-    link: "/post",
+    link: "/create",
   },
   {
     name: "logout",

@@ -1,5 +1,6 @@
 import { cn } from "@/lib/utils";
 import { HTMLAttributes, ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 type Props = {
   children: ReactNode;
   link: string;
@@ -7,8 +8,10 @@ type Props = {
 };
 export default function Icon({ children, link, className }: Props) {
   const onclick = () => {
-    console.log(link);
+    navigate(link);
   };
+
+  const navigate = useNavigate();
   return (
     <span
       onClick={onclick}

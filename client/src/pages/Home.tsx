@@ -5,7 +5,6 @@ import { Outlet } from "react-router-dom";
 export default function Home() {
   return (
     <main className="max-w-4xl mx-auto h-screen p-2 relative">
-      {" "}
       <section className=" h-full relative flex flex-col gap-4  ">
         <Header />
         <div className=" overflow-auto flex-auto relative">

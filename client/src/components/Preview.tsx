@@ -1,11 +1,13 @@
+import { useNavigate } from "react-router-dom";
 import PostInteraction from "./ui/post-interaction";
 
 type Props = {
   id: string;
 };
 export default function Preview({ id }: Props) {
+  const nav = useNavigate();
   const onclick = () => {
-    console.log(id);
+    nav("/" + id);
   };
   return (
     <div
@@ -26,7 +28,7 @@ export default function Preview({ id }: Props) {
         </span>
         <span>12:20</span>
       </div>
-      <PostInteraction dislike={100} like={10000} />
+      <PostInteraction dislike={100} like={10000} disable />
     </div>
   );
 }
