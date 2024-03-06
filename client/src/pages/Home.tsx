@@ -1,8 +1,19 @@
 import BottomNavigation from "@/components/BottomNavigation";
 import Header from "@/components/Header";
-import { Outlet } from "react-router-dom";
+import { useAuthStore } from "@/store/auth";
+import { useEffect } from "react";
+import { Outlet, useNavigate } from "react-router-dom";
 
 export default function Home() {
+  const nav = useNavigate();
+  const { user } = useAuthStore();
+
+  useEffect(() => {
+    if (!user._id) {
+      return nav("/login");
+    }
+  }, [user]);
+
   return (
     <main className="max-w-4xl mx-auto h-screen p-2 relative">
       <section className=" h-full relative flex flex-col gap-4  ">

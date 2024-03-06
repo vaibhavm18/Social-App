@@ -9,7 +9,8 @@ export default function Back() {
   return (
     <span
       onClick={goBack}
-      className="absolute text-xl left-3 lg:left-6 top-3 cursor-pointer"
+      className="absolute text-xl left-3 lg:left-5 top-1 cursor-pointer rounded-full
+                  hover:bg-gray-800 duration-200 transition-all p-2"
     >
       <IoArrowBackOutline />
     </span>

@@ -49,7 +49,7 @@ const str = `Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam vel qu
 
 export default function Post() {
   return (
-    <div className="px-2 lg:px-5 pt-12 pb-4 relative flex flex-col gap-5">
+    <div className="px-2 lg:px-5 pt-14 pb-4 relative flex flex-col gap-5">
       <Back />
       <h1 className="font-bold text-lg">
         Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed iusto
