@@ -3,14 +3,16 @@ import PostInteraction from "./ui/post-interaction";
 
 type Props = {
   id: string;
+  postRef?: React.LegacyRef<HTMLDivElement> | null;
 };
-export default function Preview({ id }: Props) {
+export default function Preview({ id, postRef }: Props) {
   const nav = useNavigate();
   const onclick = () => {
     nav("/" + id);
   };
   return (
     <div
+      ref={postRef}
       onClick={onclick}
       className="bg-[#030712]  cursor-pointer hover:scale-[1.01] shadow shadow-gray-800 hover:shadow-sm 
       hover:shadow-gray-700

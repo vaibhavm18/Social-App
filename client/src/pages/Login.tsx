@@ -1,3 +1,4 @@
+import { useAuthStore } from "@/store/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import z from "zod";
@@ -28,6 +29,7 @@ const formField = ["username", "password"] as const;
 type loginType = z.infer<typeof loginSchema>;
 
 export default function Login() {
+  const { setUser } = useAuthStore();
   const form = useForm<loginType>({
     resolver: zodResolver(loginSchema),
     defaultValues: {
@@ -36,7 +38,7 @@ export default function Login() {
     },
   });
   const onSubmit = (data: loginType) => {
-    console.log("data", data);
+    setUser({ _id: "123", token: "vaibhav123", username: "vaibhav123" });
   };
   return (
     <Form {...form}>

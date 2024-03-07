@@ -1,9 +1,9 @@
 import { create } from "zustand";
 
 type User = {
-  username?: string;
-  _id?: string;
-  token?: string;
+  username: string | null;
+  _id: string | null;
+  token: string | null;
 };
 
 type AuthStore = {
@@ -13,7 +13,20 @@ type AuthStore = {
 };
 
 export const useAuthStore = create<AuthStore>()((set) => ({
-  user: {},
-  setUser: (credential) => set((_state) => ({ user: credential })),
-  removeUser: () => set((_state) => ({ user: {} })),
+  user: {
+    token: null,
+    _id: null,
+    username: null,
+  },
+  setUser: (credential) => {
+    set(() => ({ user: credential }));
+  },
+  removeUser: () =>
+    set(() => ({
+      user: {
+        token: null,
+        _id: null,
+        username: null,
+      },
+    })),
 }));
