@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 	"path/filepath"
 
@@ -15,7 +14,6 @@ func LoadEnv() error {
 		return err
 	}
 
-	fmt.Println(path)
 	err = godotenv.Load(filepath.Join(path, ".env"))
 
 	if err != nil {
