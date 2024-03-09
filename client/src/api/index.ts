@@ -23,6 +23,10 @@ export const signup = async (data: signup) => {
 };
 
 export const authenticate = async () => {
-  const res = await axiosInstance.get("/auth");
+  console.log(axiosInstance.getUri());
+  const res = await axiosInstance.get("/auth/health");
+  console.log("res", res);
   return res.data;
 };
+
+// export const getPosts =
