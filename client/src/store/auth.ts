@@ -2,31 +2,39 @@ import { create } from "zustand";
 
 type User = {
   username: string | null;
-  _id: string | null;
+  id: string | null;
   token: string | null;
 };
 
 type AuthStore = {
   user: User;
-  setUser: (credential: User) => void;
+  setUser: (credential: {
+    username: string;
+    id: string;
+    token: string;
+  }) => void;
   removeUser: () => void;
 };
 
 export const useAuthStore = create<AuthStore>()((set) => ({
   user: {
     token: null,
-    _id: null,
+    id: null,
     username: null,
   },
   setUser: (credential) => {
-    set(() => ({ user: credential }));
+    localStorage.setItem("token", credential.token);
+
+    return set(() => ({ user: credential }));
   },
-  removeUser: () =>
-    set(() => ({
+  removeUser: () => {
+    localStorage.removeItem("token");
+    return set(() => ({
       user: {
         token: null,
-        _id: null,
+        id: null,
         username: null,
       },
-    })),
+    }));
+  },
 }));

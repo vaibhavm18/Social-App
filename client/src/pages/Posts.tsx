@@ -1,3 +1,4 @@
+import { getPosts } from "@/api";
 import Preview from "@/components/Preview";
 import { Button } from "@/components/ui/button";
 import Spinner from "@/components/ui/spinner";
@@ -27,7 +28,7 @@ export default function Posts() {
     queryKey: ["posts"],
     initialPageParam: 1,
     queryFn: async ({ pageParam = 1 }) => {
-      const res = await fetchPost(pageParam);
+      const res = (await getPosts(pageParam)).data;
       return res;
     },
     getNextPageParam: (_, pages) => {
@@ -45,17 +46,32 @@ export default function Posts() {
   if (entry?.isIntersecting) {
     fetchNextPage();
   }
+  console.log(data?.pages);
 
   return (
     <>
-      {data?.pages?.map((posts, i) => {
-        return posts.map((val, j) => {
-          if (i === data?.pages.length - 1 && j === posts.length - 1) {
-            return <Preview postRef={ref} id={val + " "} key={val} />;
-          }
-          return <Preview postRef={null} id={val + " "} key={val} />;
-        });
-      })}
+      {data?.pages?.map(
+        (
+          posts: { data: { id: string; title: string; createdAt: string }[] },
+          i
+        ) => {
+          return posts?.data?.map((val, j) => {
+            let postRef = null;
+            if (i === data?.pages.length - 1 && j === posts.data.length - 1) {
+              postRef = ref;
+            }
+            return (
+              <Preview
+                title={val.title}
+                postRef={postRef}
+                id={val.id}
+                key={val.id}
+                dateStr={val.createdAt}
+              />
+            );
+          });
+        }
+      )}
 
       {isError && !isRefetching && (
         <Button

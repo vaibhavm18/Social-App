@@ -7,7 +7,7 @@ export default function Auth() {
   const { user } = useAuthStore();
 
   useEffect(() => {
-    if (user._id) {
+    if (user.id) {
       return nav("/");
     }
   }, [user]);

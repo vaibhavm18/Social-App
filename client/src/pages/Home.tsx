@@ -9,7 +9,7 @@ export default function Home() {
   const { user } = useAuthStore();
 
   useEffect(() => {
-    if (!user._id) {
+    if (!user.id) {
       return nav("/login");
     }
   }, [user]);

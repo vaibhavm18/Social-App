@@ -1,15 +1,17 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { Suspense, lazy, useEffect, useState } from "react";
 import { Route, Routes } from "react-router-dom";
 import { authenticate } from "./api";
-import Auth from "./pages/Auth";
-import CreatePost from "./pages/CreatePost";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import PostDetail from "./pages/PostDetail";
-import Posts from "./pages/Posts";
-import Signup from "./pages/Signup";
+import Spinner from "./components/ui/spinner";
 import { useAuthStore } from "./store/auth";
+
+const Auth = lazy(() => import("./pages/Auth"));
+const CreatePost = lazy(() => import("./pages/CreatePost"));
+const Home = lazy(() => import("./pages/Home"));
+const Login = lazy(() => import("./pages/Login"));
+const Signup = lazy(() => import("./pages/Signup"));
+const Posts = lazy(() => import("./pages/Posts"));
+const PostDetail = lazy(() => import("./pages/PostDetail"));
 
 export default function App() {
   const { setUser } = useAuthStore();
@@ -34,16 +36,30 @@ export default function App() {
   }, [data, isSuccess, isLoading]);
 
   return (
-    <Routes>
-      <Route Component={Auth}>
-        <Route Component={Login} path="/login" />
-        <Route Component={Signup} path="/signup" />
-      </Route>
-      <Route Component={Home}>
-        <Route Component={Posts} path="/" />
-        <Route Component={CreatePost} path="/create" />
-        <Route Component={PostDetail} path="/:id" />
-      </Route>
-    </Routes>
+    <Suspense
+      fallback={
+        <div className="h-screen w-screen flex items-center justify-center ">
+          <Spinner />
+        </div>
+      }
+    >
+      {isLoading ? (
+        <div className="h-screen w-screen flex items-center justify-center ">
+          <Spinner />
+        </div>
+      ) : (
+        <Routes>
+          <Route Component={Auth}>
+            <Route Component={Login} path="/login" />
+            <Route Component={Signup} path="/signup" />
+          </Route>
+          <Route Component={Home}>
+            <Route Component={Posts} path="/" />
+            <Route Component={CreatePost} path="/create" />
+            <Route Component={PostDetail} path="/:id" />
+          </Route>
+        </Routes>
+      )}
+    </Suspense>
   );
 }

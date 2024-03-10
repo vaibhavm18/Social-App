@@ -1,6 +1,10 @@
+import { signup } from "@/api";
+import { signupSchema } from "@/lib/schema";
+import { signupType } from "@/lib/type";
+import { useAuthStore } from "@/store/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import z from "zod";
 import { Button } from "../components/ui/button";
 import {
   Form,
@@ -13,22 +17,10 @@ import {
 import Icon from "../components/ui/icon";
 import { Input } from "../components/ui/input";
 
-export const signupSchema = z.object({
-  email: z.string().email("Please add valid email."),
-  username: z
-    .string()
-    .min(6, "Minimum character length for username is 6")
-    .max(12, "Maximum character length for username is 12"),
-  password: z
-    .string()
-    .min(6, "Minimum character length for password is 6")
-    .max(12, "Maximum character length for password is 12"),
-});
 const formField = ["email", "username", "password"] as const;
 
-type signupType = z.infer<typeof signupSchema>;
-
 export default function Signup() {
+  const { setUser } = useAuthStore();
   const form = useForm<signupType>({
     resolver: zodResolver(signupSchema),
     defaultValues: {
@@ -37,8 +29,24 @@ export default function Signup() {
       username: "",
     },
   });
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["signup"],
+    mutationFn: async (data: signupType) => await signup(data),
+    onSuccess(data: { token: string; user: { id: string; username: string } }) {
+      setUser({
+        id: data.user.id,
+        token: data.token,
+        username: data.user.username,
+      });
+    },
+    onError(error) {
+      console.log("error", error);
+    },
+  });
   const onSubmit = (data: signupType) => {
     console.log("data", data);
+    mutate(data);
   };
   return (
     <Form {...form}>
@@ -82,7 +90,7 @@ export default function Signup() {
         <Button
           type="submit"
           className="rounded-xl"
-          // disabled={mutation.isPending ? true : false}
+          disabled={isPending ? true : false}
         >
           Submit
         </Button>

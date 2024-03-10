@@ -1,7 +1,10 @@
+import { login } from "@/api";
+import { loginSchema } from "@/lib/schema";
+import { loginType } from "@/lib/type";
 import { useAuthStore } from "@/store/auth";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
-import z from "zod";
 import { Button } from "../components/ui/button";
 import {
   Form,
@@ -14,19 +17,7 @@ import {
 import Icon from "../components/ui/icon";
 import { Input } from "../components/ui/input";
 
-export const loginSchema = z.object({
-  username: z
-    .string()
-    .min(6, "Minimum character length for username is 6")
-    .max(12, "Maximum character length for username is 12"),
-  password: z
-    .string()
-    .min(6, "Minimum character length for password is 6")
-    .max(12, "Maximum character length for password is 12"),
-});
 const formField = ["username", "password"] as const;
-
-type loginType = z.infer<typeof loginSchema>;
 
 export default function Login() {
   const { setUser } = useAuthStore();
@@ -37,8 +28,25 @@ export default function Login() {
       username: "",
     },
   });
+
+  const { isPending, mutate } = useMutation({
+    mutationKey: ["login"],
+    mutationFn: async (data: loginType) => await login(data),
+    onSuccess(data: { token: string; user: { id: string; username: string } }) {
+      setUser({
+        id: data.user.id,
+        token: data.token,
+        username: data.user.username,
+      });
+    },
+    onError(error) {
+      console.log("error", error);
+    },
+  });
+
   const onSubmit = (data: loginType) => {
-    setUser({ _id: "123", token: "vaibhav123", username: "vaibhav123" });
+    console.log("data", data);
+    mutate(data);
   };
   return (
     <Form {...form}>
@@ -82,7 +90,7 @@ export default function Login() {
         <Button
           type="submit"
           className="rounded-xl"
-          // disabled={mutation.isPending ? true : false}
+          disabled={isPending ? true : false}
         >
           Submit
         </Button>

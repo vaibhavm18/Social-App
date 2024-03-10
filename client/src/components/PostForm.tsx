@@ -1,3 +1,4 @@
+import { Post, createPost } from "@/api";
 import { Button } from "@/components/ui/button";
 import {
   Form,
@@ -7,36 +8,38 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
+import { formSchema } from "@/lib/schema";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { Textarea } from "./ui/textarea";
 
-const formSchema = z.object({
-  Title: z
-    .string({ required_error: "Title is required" })
-    .min(12, "Title should be more than 12 char")
-    .max(60, "Title shouldn't be more than 40 char"),
-
-  Description: z
-    .string({ required_error: "Description is required" })
-    .min(40, "Description should be more than 40 char")
-    .max(1000, "Description shouldn't be more than 500 char"),
-});
-
-const fields = ["Title", "Description"] as const;
+const fields = ["title", "description"] as const;
 
 export default function PostForm() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      Title: "",
-      Description: "",
+      title: "",
+      description: "",
+    },
+  });
+
+  const { mutate, isPending } = useMutation({
+    mutationKey: ["create-post"],
+    mutationFn: async (post: Post) => createPost(post),
+    onSuccess(data) {
+      console.log("data", data);
+    },
+    onError(error) {
+      console.log("error", error);
     },
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
     console.log("Hello God!", values);
+    mutate(values);
   };
 
   return (
@@ -53,7 +56,7 @@ export default function PostForm() {
             render={({ field }) => (
               <FormItem
                 className={`${
-                  val === "Description" ? "flex-auto" : ""
+                  val === "description" ? "flex-auto" : ""
                 } flex flex-col`}
               >
                 <FormLabel className="text-xl font-bold">{val}</FormLabel>
@@ -69,7 +72,11 @@ export default function PostForm() {
             )}
           />
         ))}
-        <Button type="submit" className="rounded-xl">
+        <Button
+          type="submit"
+          className="rounded-xl"
+          disabled={isPending ? true : false}
+        >
           Submit
         </Button>
       </form>
