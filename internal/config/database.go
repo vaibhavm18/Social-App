@@ -28,7 +28,7 @@ func InitDB() error {
 		return err
 	}
 
-	db = client.Database("blind")
+	db = client.Database("social")
 
 	return nil
 }

@@ -6,15 +6,6 @@ import { useIntersection } from "@mantine/hooks";
 import { useInfiniteQuery } from "@tanstack/react-query";
 import { useRef } from "react";
 
-const posts = [
-  1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 12, 2323, 123, 13, 14, 15, 16, 17, 18, 19, 20,
-];
-
-const fetchPost = async (page: number): Promise<number[]> => {
-  await new Promise((res) => setTimeout(res, 5000));
-  return posts.slice((page - 1) * 1, page * 4);
-};
-
 export default function Posts() {
   const {
     data,
@@ -52,9 +43,26 @@ export default function Posts() {
     <>
       {data?.pages?.map(
         (
-          posts: { data: { id: string; title: string; createdAt: string }[] },
+          posts: {
+            data: {
+              id: string;
+              title: string;
+              createdAt: string;
+              authorName: string;
+            }[];
+          },
           i
         ) => {
+          if (posts?.data === null && i === 0) {
+            return (
+              <div
+                key={"Empty"}
+                className="py-1 px-2 text-center w-full text-3xl"
+              >
+                Empty
+              </div>
+            );
+          }
           return posts?.data?.map((val, j) => {
             let postRef = null;
             if (i === data?.pages.length - 1 && j === posts.data.length - 1) {
@@ -67,6 +75,7 @@ export default function Posts() {
                 id={val.id}
                 key={val.id}
                 dateStr={val.createdAt}
+                username={val.authorName}
               />
             );
           });

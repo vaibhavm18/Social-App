@@ -7,8 +7,15 @@ type Props = {
   postRef?: React.LegacyRef<HTMLDivElement> | null;
   title: string;
   dateStr: string;
+  username: string;
 };
-export default function Preview({ id, postRef, title, dateStr }: Props) {
+export default function Preview({
+  id,
+  postRef,
+  title,
+  dateStr,
+  username,
+}: Props) {
   const date = formateDate(dateStr);
   const nav = useNavigate();
   const onclick = () => {
@@ -26,7 +33,7 @@ export default function Preview({ id, postRef, title, dateStr }: Props) {
       <h1 className="text-xl font-semibold">{title}</h1>
       <div className="flex justify-between items-center mb-4 mt-1 mx-2">
         <span className="hover:underline cursor-pointer opacity-75">
-          by-@vaibhav18
+          {username}
         </span>
         <span>{date}</span>
       </div>

@@ -13,14 +13,12 @@ func AddPostGroup(app *fiber.App) {
 	postGroup := app.Group("/api/v1/post")
 	postGroup.Use(util.VerifyUser)
 
-	postGroup.Get("/h", postCheck)
-
 	postGroup.Get("/", getPosts)
 	postGroup.Post("/create", createPost)
 	postGroup.Put("/like", likePost)
 	postGroup.Put("/dislike", dislikePost)
-	postGroup.Delete("/remove-like", removelike)
-	postGroup.Delete("/remove-dislike", removedislike)
+	postGroup.Put("/remove-like", removelike)
+	postGroup.Put("/remove-dislike", removedislike)
 }
 
 func postCheck(c *fiber.Ctx) error {
@@ -36,12 +34,14 @@ func createPost(c *fiber.Ctx) error {
 		})
 	}
 
-	val := c.Locals("_id")
+	id := c.Locals("_id")
+	name := c.Locals("username")
 
-	if val != nil {
-		if strVal, ok := val.(string); ok {
-			post.AuthorID, _ = primitive.ObjectIDFromHex(strVal)
-		}
+	if id, ok := id.(string); ok {
+		post.AuthorID, _ = primitive.ObjectIDFromHex(id)
+	}
+	if name, ok := name.(string); ok {
+		post.AuthorName = name
 	}
 
 	res, err := model.CreatePost(post)

@@ -4,12 +4,12 @@ export const formSchema = z.object({
   title: z
     .string({ required_error: "Title is required" })
     .min(12, "Title should be more than 12 char")
-    .max(60, "Title shouldn't be more than 40 char"),
+    .max(100, "Title shouldn't be more than 100 char"),
 
   description: z
     .string({ required_error: "Description is required" })
     .min(40, "Description should be more than 40 char")
-    .max(1000, "Description shouldn't be more than 500 char"),
+    .max(4000, "Description shouldn't be more than 4000 char"),
 });
 
 export const signupSchema = z.object({

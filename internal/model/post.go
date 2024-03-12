@@ -15,6 +15,7 @@ import (
 type PostModel struct {
 	ID          primitive.ObjectID   `json:"id,omitempty" bson:"_id,omitempty"`
 	AuthorID    primitive.ObjectID   `json:"authorId" bson:"authorId"`
+	AuthorName  string               `json:"authorName" bson:"authorName"`
 	Title       string               `json:"title" bson:"title"`
 	Description string               `json:"description" bson:"description"`
 	Likes       []primitive.ObjectID `json:"likes,omitempty" bson:"likes,omitempty"`
@@ -62,6 +63,7 @@ func CreatePost(post PostModel) (PostModel, error) {
 		Description: post.Description,
 		CreatedAt:   post.CreatedAt,
 		AuthorID:    post.AuthorID,
+		AuthorName:  post.AuthorName,
 	}, nil
 
 }
@@ -74,8 +76,8 @@ func validatePostInput(post PostModel) error {
 	}
 
 	_, err = jio.ValidateJSON(&data, jio.Object().Keys(jio.K{
-		"title":       jio.String().Required().Min(12).Max(60),
-		"description": jio.String().Min(40).Max(1000),
+		"title":       jio.String().Required().Min(12).Max(100),
+		"description": jio.String().Min(40).Max(4000),
 	}))
 
 	if err != nil {
