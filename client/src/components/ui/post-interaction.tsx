@@ -4,15 +4,13 @@ type Props = {
   like: number;
   dislike: number;
   disable?: boolean;
-  isLiked?: boolean;
-  isDisliked?: boolean;
+  interaction?: "liked" | "disliked";
 };
 export default function PostInteraction({
   dislike,
   like,
   disable,
-  isDisliked,
-  isLiked,
+  interaction,
 }: Props) {
   const onClick = () => {
     if (disable) {
@@ -25,13 +23,17 @@ export default function PostInteraction({
       <div className="flex flex-col gap-1 items-center text-xl  ">
         <FaThumbsUp
           onClick={onClick}
-          className={`cursor-pointer ${isLiked && "text-red-500"}`}
+          className={`cursor-pointer ${
+            interaction === "liked" && "text-red-500"
+          }`}
         />
         <span>{like}</span>
       </div>
       <div className="flex flex-col gap-1 items-center text-xl">
         <FaThumbsDown
-          className={`cursor-pointer ${isDisliked && "text-red-500"}`}
+          className={`cursor-pointer ${
+            interaction === "disliked" && "text-red-500"
+          }`}
         />
         <span>{dislike}</span>
       </div>

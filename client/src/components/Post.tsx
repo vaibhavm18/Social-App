@@ -1,3 +1,4 @@
+import { formateDate } from "@/lib/date";
 import Back from "./ui/back";
 import PostInteraction from "./ui/post-interaction";
 
@@ -47,21 +48,39 @@ const str = `Lorem ipsum dolor sit amet consectetur adipisicing elit. Nam vel qu
         vel, numquam non repellendus facilis, ipsam magnam repellat voluptas
         molestiae.`;
 
-export default function Post() {
+type Props = {
+  title: string;
+  username: string;
+  time: string;
+  desc: string;
+  like: number;
+  dislike: number;
+  interaction?: "liked" | "disliked";
+};
+export default function Post({
+  desc,
+  dislike,
+  like,
+  time,
+  title,
+  username,
+  interaction,
+}: Props) {
+  const date = formateDate(time);
   return (
     <div className="px-2 lg:px-5 pt-14 pb-4 relative flex flex-col gap-5">
       <Back />
-      <h1 className="font-bold text-lg">
-        Lorem ipsum dolor sit amet, consectetur adipisicing elit. Sed iusto
-        aliquid voluptatibus maiores recusandae quisquam soluta, hic sapiente
-        velit! Eum.
-      </h1>
+      <h1 className="font-bold text-lg">{title}</h1>
       <div className="flex justify-around">
-        <span>@vaibhav18</span>
-        <span>12:02</span>
+        <span>{username}</span>
+        <span>{date}</span>
       </div>
-      <p>{str}</p>
-      <PostInteraction dislike={100} like={10000} />
+      <p>{desc}</p>
+      <PostInteraction
+        dislike={dislike}
+        like={like}
+        interaction={interaction}
+      />
     </div>
   );
 }

@@ -32,6 +32,11 @@ export const getPosts = async (page: number) => {
   return res;
 };
 
+export const getPostById = async (id: string) => {
+  const res = await axiosInstance.get(`/post/${id}`);
+  return res;
+};
+
 export type Post = {
   title: string;
   description: string;
