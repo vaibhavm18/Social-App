@@ -23,6 +23,13 @@ type PostModel struct {
 	CreatedAt   time.Time            `json:"createdAt,omitempty" bson:"createdAt,omitempty"`
 }
 
+type PostRes struct {
+	PostModel
+	TotalLikes    int    `json:"totalLikes" bson:"totalLikes"`
+	TotalDislikes int    `json:"totalDislikes" bson:"totalDislikes"`
+	Interaction   string `json:"interaction" bson:"interaction"`
+}
+
 type PostInput struct {
 	UserID primitive.ObjectID `json:"userId" bson:"userId"`
 	PostID primitive.ObjectID `json:"postId" bson:"postId"`
@@ -69,7 +76,7 @@ func CreatePost(post PostModel) (PostModel, error) {
 }
 
 func validatePostInput(post PostModel) error {
-	data, err := structToByte[*PostModel](&post)
+	data, err := structToByte(&post)
 
 	if err != nil {
 		return err
@@ -87,7 +94,7 @@ func validatePostInput(post PostModel) error {
 	return nil
 }
 
-func GetPosts(page int) ([]PostModel, error) {
+func GetPosts(page int, id string) ([]PostRes, error) {
 	collection := config.GetDBCollection("Posts")
 	perPage := 3
 	skip := (page - 1) * perPage
@@ -104,7 +111,13 @@ func GetPosts(page int) ([]PostModel, error) {
 		return nil, err
 	}
 
-	var posts []PostModel
+	objectId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var posts []PostRes
 
 	for res.Next(context.Background()) {
 		var post PostModel
@@ -112,7 +125,25 @@ func GetPosts(page int) ([]PostModel, error) {
 			return nil, err
 		}
 
-		posts = append(posts, post)
+		var res PostRes
+
+		res.TotalLikes = len(post.Likes)
+		res.TotalDislikes = len(post.Dislikes)
+		for _, like := range post.Likes {
+			if like == objectId {
+				res.Interaction = "liked"
+			}
+		}
+
+		for _, dislike := range post.Dislikes {
+			if dislike == objectId {
+				res.Interaction = "disliked"
+			}
+		}
+
+		res.PostModel = post
+
+		posts = append(posts, res)
 	}
 
 	if err := res.Err(); err != nil {
@@ -124,10 +155,51 @@ func GetPosts(page int) ([]PostModel, error) {
 	return posts, nil
 }
 
-func LikePost(input PostInput) error {
+func PostById(id string) (PostRes, error) {
 	col := config.GetDBCollection("Posts")
 
-	filter := bson.M{"_id": input.PostID}
+	objectId, err := primitive.ObjectIDFromHex(id)
+
+	if err != nil {
+		return PostRes{}, err
+	}
+
+	filter := bson.M{"_id": objectId}
+
+	var post PostModel
+
+	err = col.FindOne(context.Background(), filter).Decode(&post)
+
+	if err != nil {
+		return PostRes{}, err
+	}
+
+	var res PostRes
+
+	res.TotalDislikes = len(post.Dislikes)
+	res.TotalLikes = len(post.Likes)
+
+	for _, like := range post.Likes {
+		if like == objectId {
+			res.Interaction = "liked"
+		}
+	}
+
+	for _, dislike := range post.Dislikes {
+		if dislike == objectId {
+			res.Interaction = "disliked"
+		}
+	}
+
+	res.PostModel = post
+
+	return res, err
+}
+
+func LikePost(id primitive.ObjectID, postId primitive.ObjectID) error {
+	col := config.GetDBCollection("Posts")
+
+	filter := bson.M{"_id": postId}
 
 	var post PostModel
 
@@ -138,18 +210,18 @@ func LikePost(input PostInput) error {
 	}
 
 	for _, likedBy := range post.Likes {
-		if likedBy == input.UserID {
+		if likedBy == id {
 			return errors.New("User already liked the post")
 		}
 	}
-	update := bson.M{"$addToSet": bson.M{"likes": input.UserID}}
+	update := bson.M{"$addToSet": bson.M{"likes": id}}
 	_, err = col.UpdateOne(context.Background(), filter, update)
 
 	if err != nil {
 		return err
 	}
 
-	err = RemoveDislike(input)
+	err = RemoveDislike(id, postId)
 
 	if err != nil {
 		return err
@@ -158,10 +230,10 @@ func LikePost(input PostInput) error {
 	return nil
 }
 
-func UnlikePost(input PostInput) error {
+func UnlikePost(id primitive.ObjectID, postId primitive.ObjectID) error {
 	col := config.GetDBCollection("Posts")
 
-	filter := bson.M{"_id": input.PostID}
+	filter := bson.M{"_id": postId}
 
 	var post PostModel
 
@@ -173,7 +245,7 @@ func UnlikePost(input PostInput) error {
 
 	isLiked := false
 	for _, likedBy := range post.Likes {
-		if likedBy == input.UserID {
+		if likedBy == id {
 			isLiked = true
 		}
 	}
@@ -182,23 +254,23 @@ func UnlikePost(input PostInput) error {
 		return errors.New("User did not liked this post")
 	}
 
-	update := bson.M{"$pull": bson.M{"likes": input.UserID}}
+	update := bson.M{"$pull": bson.M{"likes": id}}
 	_, err = col.UpdateOne(context.Background(), filter, update)
 
 	if err != nil {
 		return err
 	}
 
-	_ = RemoveDislike(input)
+	_ = RemoveDislike(id, postId)
 
 	return nil
 }
 
-func DislikePost(input PostInput) error {
+func DislikePost(id primitive.ObjectID, postId primitive.ObjectID) error {
 
 	col := config.GetDBCollection("Posts")
 
-	filter := bson.M{"_id": input.PostID}
+	filter := bson.M{"_id": postId}
 
 	var post PostModel
 
@@ -209,26 +281,27 @@ func DislikePost(input PostInput) error {
 	}
 
 	for _, dislikedBy := range post.Dislikes {
-		if dislikedBy == input.UserID {
+		if dislikedBy == id {
 			return errors.New("User already diliked the post")
 		}
 	}
-	update := bson.M{"$addToSet": bson.M{"dislikes": input.UserID}}
+
+	update := bson.M{"$addToSet": bson.M{"dislikes": id}}
 	_, err = col.UpdateOne(context.Background(), filter, update)
 
 	if err != nil {
 		return err
 	}
 
-	_ = UnlikePost(input)
+	_ = UnlikePost(id, postId)
 
 	return nil
 }
 
-func RemoveDislike(input PostInput) error {
+func RemoveDislike(id primitive.ObjectID, postId primitive.ObjectID) error {
 	col := config.GetDBCollection("Posts")
 
-	filter := bson.M{"_id": input.PostID}
+	filter := bson.M{"_id": postId}
 
 	var post PostModel
 
@@ -240,7 +313,7 @@ func RemoveDislike(input PostInput) error {
 
 	isAlreadyDislike := false
 	for _, dislikedBy := range post.Dislikes {
-		if dislikedBy == input.UserID {
+		if dislikedBy == id {
 			isAlreadyDislike = true
 		}
 	}
@@ -249,14 +322,14 @@ func RemoveDislike(input PostInput) error {
 		return errors.New("User already diliked the post.")
 	}
 
-	update := bson.M{"$pull": bson.M{"dislikes": input.UserID}}
+	update := bson.M{"$pull": bson.M{"dislikes": id}}
 	_, err = col.UpdateOne(context.Background(), filter, update)
 
 	if err != nil {
 		return err
 	}
 
-	// err = UnlikePost(input)
+	err = UnlikePost(id, postId)
 
 	if err != nil {
 		return err

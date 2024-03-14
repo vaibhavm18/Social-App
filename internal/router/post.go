@@ -14,11 +14,12 @@ func AddPostGroup(app *fiber.App) {
 	postGroup.Use(util.VerifyUser)
 
 	postGroup.Get("/", getPosts)
+	postGroup.Get("/:id", getPostById)
 	postGroup.Post("/create", createPost)
-	postGroup.Put("/like", likePost)
-	postGroup.Put("/dislike", dislikePost)
-	postGroup.Put("/remove-like", removelike)
-	postGroup.Put("/remove-dislike", removedislike)
+	postGroup.Put("/like/:id", likePost)
+	postGroup.Put("/dislike/:id", dislikePost)
+	postGroup.Put("/remove-like/:id", removelike)
+	postGroup.Put("/remove-dislike/:id", removedislike)
 }
 
 func postCheck(c *fiber.Ctx) error {
@@ -57,6 +58,28 @@ func createPost(c *fiber.Ctx) error {
 	})
 }
 
+func getPostById(c *fiber.Ctx) error {
+	id := c.Params("id")
+
+	if id == "" {
+		return c.Status(403).JSON(fiber.Map{
+			"errorMessage": "Invalid id",
+		})
+	}
+
+	post, err := model.PostById(id)
+
+	if err != nil {
+		return c.Status(403).JSON(fiber.Map{
+			"errorMessage": err.Error(),
+		})
+	}
+	return c.Status(200).JSON(fiber.Map{
+		"message": "Success",
+		"post":    post,
+	})
+}
+
 func getPosts(c *fiber.Ctx) error {
 	page := c.Query("page")
 
@@ -66,7 +89,16 @@ func getPosts(c *fiber.Ctx) error {
 		pageToNum = 1
 	}
 
-	res, err := model.GetPosts(pageToNum)
+	id := c.Locals("_id")
+
+	conStr, ok := id.(string)
+	if !ok {
+		return c.Status(404).JSON(fiber.Map{
+			"errorMessage": "Invalid",
+		})
+	}
+
+	res, err := model.GetPosts(pageToNum, conStr)
 
 	if err != nil {
 		return c.Status(404).JSON(fiber.Map{
@@ -82,23 +114,17 @@ func getPosts(c *fiber.Ctx) error {
 
 func likePost(c *fiber.Ctx) error {
 
-	var input model.PostInput
+	postStr := c.Params("id")
 
-	if err := c.BodyParser(&input); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"errorMessage": "Every field is required",
-		})
-	}
+	idStr := c.Locals("_id")
 
-	val := c.Locals("_id")
+	strVal, _ := idStr.(string)
 
-	if val != nil {
-		if strVal, ok := val.(string); ok {
-			input.UserID, _ = primitive.ObjectIDFromHex(strVal)
-		}
-	}
+	id, _ := primitive.ObjectIDFromHex(strVal)
 
-	err := model.LikePost(input)
+	postId, _ := primitive.ObjectIDFromHex(postStr)
+
+	err := model.LikePost(id, postId)
 
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -112,23 +138,17 @@ func likePost(c *fiber.Ctx) error {
 }
 
 func dislikePost(c *fiber.Ctx) error {
-	var input model.PostInput
+	postStr := c.Params("id")
 
-	if err := c.BodyParser(&input); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"errorMessage": "Every field is required",
-		})
-	}
+	idStr := c.Locals("_id")
 
-	val := c.Locals("_id")
+	strVal, _ := idStr.(string)
 
-	if val != nil {
-		if strVal, ok := val.(string); ok {
-			input.UserID, _ = primitive.ObjectIDFromHex(strVal)
-		}
-	}
+	id, _ := primitive.ObjectIDFromHex(strVal)
 
-	err := model.DislikePost(input)
+	postId, _ := primitive.ObjectIDFromHex(postStr)
+
+	err := model.DislikePost(id, postId)
 
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -142,23 +162,17 @@ func dislikePost(c *fiber.Ctx) error {
 }
 
 func removelike(c *fiber.Ctx) error {
-	var input model.PostInput
+	postStr := c.Params("id")
 
-	if err := c.BodyParser(&input); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"errorMessage": "Every field is required",
-		})
-	}
+	idStr := c.Locals("_id")
 
-	val := c.Locals("_id")
+	strVal, _ := idStr.(string)
 
-	if val != nil {
-		if strVal, ok := val.(string); ok {
-			input.UserID, _ = primitive.ObjectIDFromHex(strVal)
-		}
-	}
+	id, _ := primitive.ObjectIDFromHex(strVal)
 
-	err := model.UnlikePost(input)
+	postId, _ := primitive.ObjectIDFromHex(postStr)
+
+	err := model.UnlikePost(id, postId)
 
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{
@@ -172,23 +186,17 @@ func removelike(c *fiber.Ctx) error {
 }
 
 func removedislike(c *fiber.Ctx) error {
-	var input model.PostInput
+	postStr := c.Params("id")
 
-	if err := c.BodyParser(&input); err != nil {
-		return c.Status(400).JSON(fiber.Map{
-			"errorMessage": "Every field is required",
-		})
-	}
+	idStr := c.Locals("_id")
 
-	val := c.Locals("_id")
+	strVal, _ := idStr.(string)
 
-	if val != nil {
-		if strVal, ok := val.(string); ok {
-			input.UserID, _ = primitive.ObjectIDFromHex(strVal)
-		}
-	}
+	id, _ := primitive.ObjectIDFromHex(strVal)
 
-	err := model.RemoveDislike(input)
+	postId, _ := primitive.ObjectIDFromHex(postStr)
+
+	err := model.RemoveDislike(id, postId)
 
 	if err != nil {
 		return c.Status(400).JSON(fiber.Map{

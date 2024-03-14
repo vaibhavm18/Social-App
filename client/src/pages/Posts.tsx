@@ -37,7 +37,6 @@ export default function Posts() {
   if (entry?.isIntersecting) {
     fetchNextPage();
   }
-  console.log(data?.pages);
 
   return (
     <>
@@ -49,6 +48,8 @@ export default function Posts() {
               title: string;
               createdAt: string;
               authorName: string;
+              totalLikes: number;
+              totalDislikes: number;
             }[];
           },
           i
@@ -76,6 +77,8 @@ export default function Posts() {
                 key={val.id}
                 dateStr={val.createdAt}
                 username={val.authorName}
+                totalLikes={val.totalLikes}
+                totalDislikes={val.totalDislikes}
               />
             );
           });
@@ -91,6 +94,7 @@ export default function Posts() {
           Refetch
         </Button>
       )}
+
       {isLoading && <Spinner />}
       {isFetchingNextPage && <Spinner />}
       {isRefetching && <Spinner />}

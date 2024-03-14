@@ -1,4 +1,5 @@
 import { getPostById } from "@/api";
+import Post from "@/components/Post";
 import Spinner from "@/components/ui/spinner";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
@@ -17,28 +18,17 @@ export default function PostDetail() {
     queryFn: async () => (await getPostById(id)).data,
   });
 
-  console.log("first", data.post);
+  console.log("first", data?.post);
 
   useEffect(() => {
     if (isError) {
-      console.log(error);
       nav(-1);
     }
   }, [isError]);
 
   return (
     <>
-      <section>
-        {isLoading ? (
-          <Spinner />
-        ) : (
-          <></>
-          // <Post
-          //   desc={data?.data.description}
-          //   // dislike={data.}
-          // />
-        )}
-      </section>
+      <section>{isLoading ? <Spinner /> : <Post {...data?.post} />}</section>
     </>
   );
 }

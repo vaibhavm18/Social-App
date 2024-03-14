@@ -107,7 +107,7 @@ func GetUserById(username string) (User, error) {
 }
 
 func validateSignUp(user User) error {
-	data, err := structToByte[User](user)
+	data, err := structToByte(user)
 
 	if err != nil {
 		return err

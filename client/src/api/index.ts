@@ -49,21 +49,21 @@ export const createPost = async (post: Post) => {
 };
 
 export const like = async (postId: string) => {
-  const res = await axiosInstance.post("/post/like", postId);
+  const res = await axiosInstance.put("/post/like/" + postId);
   return res;
 };
 
 export const dislike = async (postId: string) => {
-  const res = await axiosInstance.put("/post/dislike", postId);
+  const res = await axiosInstance.put("/post/dislike/" + postId);
   return res;
 };
 
 export const removeLike = async (postId: string) => {
-  const res = await axiosInstance.put("/post/remove-like", postId);
+  const res = await axiosInstance.put("/post/remove-like/" + postId);
   return res;
 };
 
 export const removeDislike = async (postId: string) => {
-  const res = await axiosInstance.put("/post/remove-dislike", postId);
+  const res = await axiosInstance.put("/post/remove-dislike/" + postId);
   return res;
 };

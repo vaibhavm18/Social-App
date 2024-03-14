@@ -8,6 +8,8 @@ type Props = {
   title: string;
   dateStr: string;
   username: string;
+  totalLikes: number;
+  totalDislikes: number;
 };
 export default function Preview({
   id,
@@ -15,6 +17,8 @@ export default function Preview({
   title,
   dateStr,
   username,
+  totalDislikes,
+  totalLikes,
 }: Props) {
   const date = formateDate(dateStr);
   const nav = useNavigate();
@@ -37,7 +41,13 @@ export default function Preview({
         </span>
         <span>{date}</span>
       </div>
-      <PostInteraction dislike={100} like={10000} disable />
+      <PostInteraction
+        dislike={totalDislikes}
+        like={totalLikes}
+        postId={id}
+        disable
+        interaction={undefined}
+      />
     </div>
   );
 }
