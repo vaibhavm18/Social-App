@@ -1,6 +1,6 @@
 import { formateDate } from "@/lib/date";
 import { useNavigate } from "react-router-dom";
-import PostInteraction from "./ui/post-interaction";
+import PostInteraction, { Like } from "./ui/post-interaction";
 
 type Props = {
   id: string;
@@ -10,6 +10,7 @@ type Props = {
   username: string;
   totalLikes: number;
   totalDislikes: number;
+  interaction: Like;
 };
 export default function Preview({
   id,
@@ -19,6 +20,7 @@ export default function Preview({
   username,
   totalDislikes,
   totalLikes,
+  interaction,
 }: Props) {
   const date = formateDate(dateStr);
   const nav = useNavigate();
@@ -46,7 +48,7 @@ export default function Preview({
         like={totalLikes}
         postId={id}
         disable
-        interaction={undefined}
+        interaction={interaction}
       />
     </div>
   );

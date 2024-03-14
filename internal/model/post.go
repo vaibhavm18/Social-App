@@ -3,6 +3,7 @@ package model
 import (
 	"context"
 	"errors"
+	"fmt"
 	"time"
 
 	"github.com/faceair/jio"
@@ -155,20 +156,14 @@ func GetPosts(page int, id string) ([]PostRes, error) {
 	return posts, nil
 }
 
-func PostById(id string) (PostRes, error) {
+func PostById(postId primitive.ObjectID, id primitive.ObjectID) (PostRes, error) {
 	col := config.GetDBCollection("Posts")
 
-	objectId, err := primitive.ObjectIDFromHex(id)
-
-	if err != nil {
-		return PostRes{}, err
-	}
-
-	filter := bson.M{"_id": objectId}
+	filter := bson.M{"_id": postId}
 
 	var post PostModel
 
-	err = col.FindOne(context.Background(), filter).Decode(&post)
+	err := col.FindOne(context.Background(), filter).Decode(&post)
 
 	if err != nil {
 		return PostRes{}, err
@@ -180,13 +175,15 @@ func PostById(id string) (PostRes, error) {
 	res.TotalLikes = len(post.Likes)
 
 	for _, like := range post.Likes {
-		if like == objectId {
+		fmt.Println("res", like, id)
+		if like == id {
+			fmt.Println("yes")
 			res.Interaction = "liked"
 		}
 	}
 
 	for _, dislike := range post.Dislikes {
-		if dislike == objectId {
+		if dislike == id {
 			res.Interaction = "disliked"
 		}
 	}
@@ -261,8 +258,6 @@ func UnlikePost(id primitive.ObjectID, postId primitive.ObjectID) error {
 		return err
 	}
 
-	_ = RemoveDislike(id, postId)
-
 	return nil
 }
 
@@ -324,12 +319,6 @@ func RemoveDislike(id primitive.ObjectID, postId primitive.ObjectID) error {
 
 	update := bson.M{"$pull": bson.M{"dislikes": id}}
 	_, err = col.UpdateOne(context.Background(), filter, update)
-
-	if err != nil {
-		return err
-	}
-
-	err = UnlikePost(id, postId)
 
 	if err != nil {
 		return err

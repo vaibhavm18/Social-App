@@ -10,7 +10,7 @@ type Props = {
   postId: string;
 };
 
-export type Like = "dislike" | "liked" | undefined;
+export type Like = "disliked" | "liked" | "";
 export type Rating = {
   likes: number;
   dislikes: number;
@@ -30,7 +30,7 @@ export default function PostInteraction({
   });
 
   const { dislikePost, likePost, removeDislikePost, removeLikePost } =
-    useInteractionHook(setLikedState, setRating);
+    useInteractionHook(setLikedState, setRating, likedState);
 
   const pressLike = async () => {
     if (disable) {
@@ -46,7 +46,7 @@ export default function PostInteraction({
     if (disable) {
       return;
     }
-    if (likedState === "dislike") {
+    if (likedState === "disliked") {
       await removeDislikePost.mutateAsync(postId);
     } else {
       await dislikePost.mutateAsync(postId);
@@ -68,7 +68,7 @@ export default function PostInteraction({
         <FaThumbsDown
           onClick={pressDislike}
           className={`cursor-pointer ${
-            likedState === "dislike" && "text-red-500"
+            likedState === "disliked" && "text-red-500"
           }`}
         />
         <span>{rating.dislikes}</span>

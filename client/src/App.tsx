@@ -27,8 +27,11 @@ export default function App() {
 
   useEffect(() => {
     if (isSuccess) {
-      console.log("data hello", data);
-      // setUser(data);
+      setUser({
+        id: data.user.id,
+        token: data.token,
+        username: data.user.username,
+      });
     }
     if (isLoading) {
       setEnabled(false);

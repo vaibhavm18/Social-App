@@ -1,6 +1,7 @@
 import { getPosts } from "@/api";
 import Preview from "@/components/Preview";
 import { Button } from "@/components/ui/button";
+import { Like } from "@/components/ui/post-interaction";
 import Spinner from "@/components/ui/spinner";
 import { useIntersection } from "@mantine/hooks";
 import { useInfiniteQuery } from "@tanstack/react-query";
@@ -50,6 +51,7 @@ export default function Posts() {
               authorName: string;
               totalLikes: number;
               totalDislikes: number;
+              interaction: Like;
             }[];
           },
           i
@@ -79,6 +81,7 @@ export default function Posts() {
                 username={val.authorName}
                 totalLikes={val.totalLikes}
                 totalDislikes={val.totalDislikes}
+                interaction={val.interaction}
               />
             );
           });

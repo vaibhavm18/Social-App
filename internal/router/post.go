@@ -59,15 +59,17 @@ func createPost(c *fiber.Ctx) error {
 }
 
 func getPostById(c *fiber.Ctx) error {
-	id := c.Params("id")
+	postStr := c.Params("id")
 
-	if id == "" {
-		return c.Status(403).JSON(fiber.Map{
-			"errorMessage": "Invalid id",
-		})
-	}
+	idStr := c.Locals("_id")
 
-	post, err := model.PostById(id)
+	strVal, _ := idStr.(string)
+
+	id, _ := primitive.ObjectIDFromHex(strVal)
+
+	postId, _ := primitive.ObjectIDFromHex(postStr)
+
+	post, err := model.PostById(postId, id)
 
 	if err != nil {
 		return c.Status(403).JSON(fiber.Map{

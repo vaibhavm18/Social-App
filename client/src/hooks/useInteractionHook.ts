@@ -4,12 +4,16 @@ import { useMutation } from "@tanstack/react-query";
 
 export const useInteractionHook = (
   setLikedState: React.Dispatch<React.SetStateAction<Like>>,
-  setRating: React.Dispatch<React.SetStateAction<Rating>>
+  setRating: React.Dispatch<React.SetStateAction<Rating>>,
+  likedState: Like
 ) => {
   const likePost = useMutation({
     mutationKey: ["like"],
     mutationFn: async (id: string) => await like(id),
     onSuccess() {
+      if (likedState === "disliked") {
+        setRating((prev) => ({ ...prev, dislikes: prev.dislikes - 1 }));
+      }
       setRating((prev) => ({ ...prev, likes: prev.likes + 1 }));
       setLikedState("liked");
     },
@@ -20,8 +24,11 @@ export const useInteractionHook = (
     mutationKey: ["dislike"],
     mutationFn: async (id: string) => await dislike(id),
     onSuccess() {
+      if (likedState === "liked") {
+        setRating((prev) => ({ ...prev, likes: prev.likes - 1 }));
+      }
       setRating((prev) => ({ ...prev, dislikes: prev.dislikes + 1 }));
-      setLikedState("dislike");
+      setLikedState("disliked");
     },
   });
 
@@ -30,7 +37,7 @@ export const useInteractionHook = (
     mutationFn: async (id: string) => await removeLike(id),
     onSuccess() {
       setRating((prev) => ({ ...prev, likes: prev.likes - 1 }));
-      setLikedState(undefined);
+      setLikedState("");
     },
   });
 
@@ -39,7 +46,7 @@ export const useInteractionHook = (
     mutationFn: async (id: string) => await removeDislike(id),
     onSuccess() {
       setRating((prev) => ({ ...prev, dislikes: prev.dislikes - 1 }));
-      setLikedState(undefined);
+      setLikedState("");
     },
   });
 
