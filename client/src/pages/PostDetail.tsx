@@ -13,7 +13,7 @@ export default function PostDetail() {
     return;
   }
 
-  const { isLoading, isError, data, error } = useQuery({
+  const { isLoading, isError, data } = useQuery({
     queryKey: ["post", id],
     queryFn: async () => (await getPostById(id)).data,
   });
