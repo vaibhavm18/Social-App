@@ -221,10 +221,10 @@ func LikePost(id primitive.ObjectID, postId primitive.ObjectID) error {
 	err = RemoveDislike(id, postId)
 
 	if err != nil {
-		return err
+		return nil
 	}
 
-	return nil
+	return err
 }
 
 func UnlikePost(id primitive.ObjectID, postId primitive.ObjectID) error {
