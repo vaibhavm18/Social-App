@@ -1,6 +1,5 @@
 import { FaPlus } from "react-icons/fa";
 import { IoMdHome } from "react-icons/io";
-import { IoLogOut } from "react-icons/io5";
 import Icon from "./ui/icon";
 
 export const icons = [
@@ -13,11 +12,6 @@ export const icons = [
     name: "post",
     icon: <FaPlus />,
     link: "/create",
-  },
-  {
-    name: "logout",
-    icon: <IoLogOut />,
-    link: "/login",
   },
 ];
 

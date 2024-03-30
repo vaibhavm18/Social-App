@@ -1,3 +1,4 @@
+import Logout from "@/pages/Logout";
 import { icons } from "./BottomNavigation";
 import Icon from "./ui/icon";
 
@@ -11,6 +12,8 @@ export default function Header() {
             {val.icon}
           </Icon>
         ))}
+
+        <Logout />
         <li className="h-10 w-10 bg-white rounded-full cursor-pointer"></li>
       </ul>
     </header>
