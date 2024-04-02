@@ -30,7 +30,8 @@ export default function PostForm() {
     mutationKey: ["create-post"],
     mutationFn: async (post: Post) => createPost(post),
     onSuccess(data) {
-      console.log("data", data);
+      form.setValue("title", "");
+      form.setValue("description", "");
     },
     onError(error) {
       console.log("error", error);
@@ -38,7 +39,6 @@ export default function PostForm() {
   });
 
   const onSubmit = (values: z.infer<typeof formSchema>) => {
-    console.log("Hello God!", values);
     mutate(values);
   };
 
