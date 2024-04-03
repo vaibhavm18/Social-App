@@ -29,7 +29,7 @@ export default function PostForm() {
   const { mutate, isPending } = useMutation({
     mutationKey: ["create-post"],
     mutationFn: async (post: Post) => createPost(post),
-    onSuccess(data) {
+    onSuccess(_data) {
       form.setValue("title", "");
       form.setValue("description", "");
     },
